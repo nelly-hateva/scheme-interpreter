@@ -1,0 +1,45 @@
+grammar Scheme
+  rule result
+    expression
+  end
+
+  rule expression
+    atom
+  end
+
+  rule atom
+    string / number / '(' e:expression ')'
+    {
+      def to_sexp
+        e.to_sexp
+      end
+    }
+  end
+
+  rule string
+    '"' (!'"' . / '\"')* '"' {
+      def to_sexp
+        [:string, text_value[1..-2]]
+      end
+    }
+  end
+
+  rule number
+    [0-9]+ '.' [0-9]+
+    {
+      def to_sexp
+        [:number, Float(text_value)]
+      end
+    } /
+    [0-9]+
+    {
+      def to_sexp
+        [:number, Integer(text_value)]
+      end
+    }
+  end
+
+  rule whitespace
+    " "*
+  end
+end
