@@ -4,7 +4,7 @@ grammar Scheme
   end
 
   rule expression
-    atom
+    atom / arithmetic
   end
 
   rule atom
@@ -25,13 +25,13 @@ grammar Scheme
   end
 
   rule number
-    [0-9]+ '.' [0-9]+
+    ('+' / '-') 0..1 [0-9]+ '.' [0-9]+
     {
       def to_sexp
         [:number, Float(text_value)]
       end
     } /
-    [0-9]+
+    ('+' / '-') 0..1 [0-9]+
     {
       def to_sexp
         [:number, Integer(text_value)]
@@ -41,5 +41,49 @@ grammar Scheme
 
   rule whitespace
     " "*
+  end
+
+  rule left_parenthesis
+    whitespace '(' whitespace
+  end
+  
+  rule right_parenthesis
+    whitespace ')' whitespace
+  end
+
+  rule arithmetic
+    addition / multiplication / negation / division
+  end
+
+  rule division
+     left_parenthesis '/' whitespace dividend:expression whitespace divisor:expression right_parenthesis {
+      def to_sexp
+        [:/, dividend.to_sexp, divisor.to_sexp]
+      end
+    }
+  end
+
+  rule multiplication
+    left_parenthesis '*' whitespace left_factor:expression whitespace right_factor:expression right_parenthesis {
+      def to_sexp
+        [:*, left_factor.to_sexp, right_factor.to_sexp]
+      end
+    }
+  end
+
+  rule negation
+    left_parenthesis '-' whitespace minuend:expression whitespace substractor:expression right_parenthesis {
+      def to_sexp
+        [:-, minuend.to_sexp, substractor.to_sexp]
+      end
+    }
+  end
+
+  rule addition
+    left_parenthesis '+' whitespace left_addend:expression whitespace right_addend:expression right_parenthesis {
+      def to_sexp
+        [:+, left_addend.to_sexp, right_addend.to_sexp]
+      end
+    }
   end
 end
