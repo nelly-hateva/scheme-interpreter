@@ -1,0 +1,89 @@
+grammar Scheme
+  rule result
+    expression
+  end
+
+  rule expression
+    atom / arithmetic
+  end
+
+  rule atom
+    string / number / '(' e:expression ')'
+    {
+      def to_sexp
+        e.to_sexp
+      end
+    }
+  end
+
+  rule string
+    '"' (!'"' . / '\"')* '"' {
+      def to_sexp
+        [:string, text_value[1..-2]]
+      end
+    }
+  end
+
+  rule number
+    ('+' / '-') 0..1 [0-9]+ '.' [0-9]+
+    {
+      def to_sexp
+        [:number, Float(text_value)]
+      end
+    } /
+    ('+' / '-') 0..1 [0-9]+
+    {
+      def to_sexp
+        [:number, Integer(text_value)]
+      end
+    }
+  end
+
+  rule whitespace
+    " "*
+  end
+
+  rule left_parenthesis
+    whitespace '(' whitespace
+  end
+  
+  rule right_parenthesis
+    whitespace ')' whitespace
+  end
+
+  rule arithmetic
+    addition / multiplication / negation / division
+  end
+
+  rule division
+     left_parenthesis '/' whitespace dividend:expression whitespace divisor:expression right_parenthesis {
+      def to_sexp
+        [:/, dividend.to_sexp, divisor.to_sexp]
+      end
+    }
+  end
+
+  rule multiplication
+    left_parenthesis '*' whitespace left_factor:expression whitespace right_factor:expression right_parenthesis {
+      def to_sexp
+        [:*, left_factor.to_sexp, right_factor.to_sexp]
+      end
+    }
+  end
+
+  rule negation
+    left_parenthesis '-' whitespace minuend:expression whitespace substractor:expression right_parenthesis {
+      def to_sexp
+        [:-, minuend.to_sexp, substractor.to_sexp]
+      end
+    }
+  end
+
+  rule addition
+    left_parenthesis '+' whitespace left_addend:expression whitespace right_addend:expression right_parenthesis {
+      def to_sexp
+        [:+, left_addend.to_sexp, right_addend.to_sexp]
+      end
+    }
+  end
+end
