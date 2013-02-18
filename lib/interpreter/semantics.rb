@@ -1,6 +1,6 @@
 module Expr
   def self.build(sexpression)
-    if [:number, :string, :variable].include? sexpression[0]
+    if [:number, :string, :symbol].include? sexpression[0]
       Atom.build sexpression[0], sexpression[1]
     elsif [:+, :-, :*, :/].include? sexpression[0]
       Arithmetic.build sexpression[0], sexpression[1]
@@ -20,8 +20,8 @@ class Atom
   def self.build(atom, value)
     case atom
     when :number then Number.new value
-    when :string then My_String.new value
-    when :variable then Variable.new value
+    when :string then MyString.new value
+    when :symbol then MySymbol.new value
     end
   end
 end
@@ -32,18 +32,18 @@ class Number < Atom
   end
 end
 
-class My_String < Atom
+class MyString < Atom
   def evaluate(environment = {})
     value
   end
 end
 
-class Variable < Atom
+class MySymbol < Atom
   def evaluate(environment = {})
     if environment.has_key?(value)
       environment[value]
     else
-      raise "#{value}: this variable is not defined"
+      raise "#{value}: this symbol is not defined"
     end
   end
 end
@@ -94,7 +94,7 @@ class Define
 
   def self.build(sexpression_name, sexpression_value)
     if not ((Expr.build sexpression_name).is_a? Atom or (Expr.build sexpression_name).is_a? Arithmetic )
-      raise "define: expected value to be number, string,variable or arithmetic expression"
+      raise "define: expected value to be number, string, symbol or arithmetic expression"
     else
       Define.new (Expr.build sexpression_name).value, (Expr.build sexpression_value).value
     end

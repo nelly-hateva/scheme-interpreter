@@ -35,22 +35,22 @@ describe SchemeParser , "strings" do
   end
 end
 
-describe SchemeParser , "variables" do
+describe SchemeParser , "symbols" do
 
   before do
     @parser = SchemeParser.new
   end
 
-  it 'can parse variables' do
-    @parser.parse("x").to_sexp.should eq [:variable, :x]
-    @parser.parse("x9_1").to_sexp.should eq [:variable, :x9_1]
-    @parser.parse("x0_").to_sexp.should eq [:variable, :x0_]
-    @parser.parse("xoxo_12").to_sexp.should eq [:variable, :xoxo_12]
-    @parser.parse("doctor_11").to_sexp.should eq [:variable, :doctor_11]
-    @parser.parse("u42").to_sexp.should eq [:variable, :u42]
+  it 'can parse symbols' do
+    @parser.parse("x").to_sexp.should eq [:symbol, :x]
+    @parser.parse("x9_1").to_sexp.should eq [:symbol, :x9_1]
+    @parser.parse("x0_").to_sexp.should eq [:symbol, :x0_]
+    @parser.parse("xoxo_12").to_sexp.should eq [:symbol, :xoxo_12]
+    @parser.parse("doctor_11").to_sexp.should eq [:symbol, :doctor_11]
+    @parser.parse("u42").to_sexp.should eq [:symbol, :u42]
   end
 
-  it 'can parse nested arithmetic expressions with variables' do
-    @parser.parse("(+ 1 (* 1 x))").to_sexp.should eq [:+, [[:number, 1], [:*, [[:number, 1], [:variable, :x]]]]]
+  it 'can parse nested arithmetic expressions with symbols' do
+    @parser.parse("(+ 1 (* 1 x))").to_sexp.should eq [:+, [[:number, 1], [:*, [[:number, 1], [:symbol, :x]]]]]
   end
 end

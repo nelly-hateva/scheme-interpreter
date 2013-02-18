@@ -4,7 +4,7 @@ grammar Scheme
   end
 
   rule expression
-    whitespace e:( atom / arithmetic / defination ) whitespace
+    whitespace e:( atom / arithmetic / defination / define_function) whitespace
     {
       def to_sexp
         e.to_sexp
@@ -22,7 +22,7 @@ grammar Scheme
   end
 
   rule atom
-    string / number / variable
+    string / number / symbol
   end
 
   rule string
@@ -49,11 +49,11 @@ grammar Scheme
     }
   end
 
-  rule variable
+  rule symbol
     [a-z] [a-z0-9_]*
     {
       def to_sexp
-        [:variable, text_value.to_sym]
+        [:symbol, text_value.to_sym]
       end
     }
   end
@@ -111,10 +111,20 @@ grammar Scheme
   end
 
   rule defination
-    left_parenthesis 'define' whitespace variable whitespace expression right_parenthesis
+    left_parenthesis 'define' whitespace symbol whitespace expression right_parenthesis
     {
       def to_sexp
-        [:define, variable.to_sexp, expression.to_sexp]
+        [:define, symbol.to_sexp, expression.to_sexp]
+      end
+    }
+  end
+
+  rule define_function
+    left_parenthesis 'define' left_parenthesis operator:symbol whitespace arguments:symbol right_parenthesis 
+      body:expression right_parenthesis
+    {
+      def to_sexp
+        [:define_function, operator.to_sexp, arguments.to_sexp, body.to_sexp]
       end
     }
   end
