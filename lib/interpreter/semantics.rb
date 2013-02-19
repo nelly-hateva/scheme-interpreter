@@ -1,11 +1,13 @@
 module Expr
   def self.build(sexpression)
-    if [:number, :string, :symbol].include? sexpression[0]
+    if [:number, :string, :symbol, :boolean].include? sexpression[0]
       Atom.build sexpression[0], sexpression[1]
     elsif [:+, :-, :*, :/].include? sexpression[0]
       Arithmetic.build sexpression[0], sexpression[1]
     elsif [:define].include? sexpression[0]
       Define.build sexpression[1], sexpression[2]
+    elsif [:define_function].include? sexpression[0]
+      DefineFunction.build sexpression[1], sexpression[2], sexpression[3]
     end
   end
 end
@@ -22,6 +24,7 @@ class Atom
     when :number then Number.new value
     when :string then MyString.new value
     when :symbol then MySymbol.new value
+    when :boolean then Boolean.new value
     end
   end
 end
@@ -44,6 +47,16 @@ class MySymbol < Atom
       environment[value]
     else
       raise "#{value}: this symbol is not defined"
+    end
+  end
+end
+
+class Boolean < Atom
+  def evaluate(environment = {})
+    if value == :t
+      true
+    else
+      false
     end
   end
 end
@@ -110,5 +123,31 @@ class Define
     else
       environment[name] = value
     end
+  end
+end
+
+class DefineFunction
+  def self.build(operator, args, body)
+    DefineFunction.new (Expr.build operator), (Expr.build args), (Expr.build body)
+  end
+
+  def initialize(operator, args, body)
+    @operator, @args, @body = operator, args, body
+  end
+
+  def evaluate(environment = {})
+  end
+end
+
+class CallFunction
+  def self.build(operator, args, body)
+    DefineFunction.new (Expr.build operator), (Expr.build args), (Expr.build body)
+  end
+
+  def initialize(operator, args, body)
+    @operator, @args, @body = operator, args, body
+  end
+
+  def evaluate(environment = {})
   end
 end

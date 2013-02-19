@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Expr , "atoms" do
+describe Atom do
   def parse(input)
     SchemeParser.new.parse(input).to_sexp
   end
@@ -13,7 +13,7 @@ describe Expr , "atoms" do
     build(string).evaluate(env)
   end
 
-  it "supports evaluation of numbers" do
+  it "evaluation of numbers" do
     evaluate('-2').should eq -2
     evaluate('0').should eq 0
     evaluate('-0.00005').should eq -0.00005
@@ -21,12 +21,19 @@ describe Expr , "atoms" do
     evaluate('1.0e1').should eq 10
   end
 
-  it "supports evaluation of strings" do
+  it "evaluation of strings" do
     evaluate('"Ruby"').should eq "Ruby"
     evaluate('"Ruby Project\nTest"').should eq "Ruby Project\\nTest"
   end
 
-  it "supports evaluation of variables" do
+  it "evaluation of boolean" do
+    evaluate('#t').should eq true
+    evaluate('#T').should eq true
+    evaluate('#f').should eq false
+    evaluate('#F').should eq false
+  end
+
+  it "evaluation of variables" do
     evaluate('x', x: 1).should eq 1
   end
 

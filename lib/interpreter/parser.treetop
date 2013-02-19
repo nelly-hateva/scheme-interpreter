@@ -4,7 +4,7 @@ grammar Scheme
   end
 
   rule expression
-    whitespace e:( atom / arithmetic / defination / define_function) whitespace
+    whitespace e:( atom / arithmetic / defination / define_function / function ) whitespace
     {
       def to_sexp
         e.to_sexp
@@ -22,11 +22,11 @@ grammar Scheme
   end
 
   rule atom
-    string / number / symbol
+    string / number / symbol / boolean
   end
 
   rule string
-    '"' (!'"' . / '\"')* '"'
+    '"' ('\\"' / [^"])* '"'
     {
       def to_sexp
         [:string, text_value[1..-2]]
@@ -35,13 +35,13 @@ grammar Scheme
   end
 
   rule number
-    ('+' / '-') 0..1 [0-9]+ '.' [0-9]+ ( ( 'e' / 'E' ) [0-9]+ )*
+    ('+' / '-')? digit+ '.' digit+ ( [eE] digit+ )?
     {
       def to_sexp
         [:number, Float(text_value)]
       end
     } /
-    ('+' / '-') 0..1 [0-9]+
+    ('+' / '-')? digit+
     {
       def to_sexp
         [:number, Integer(text_value)]
@@ -49,11 +49,33 @@ grammar Scheme
     }
   end
 
+  rule digit
+    [0-9]
+  end
+
   rule symbol
-    [a-z] [a-z0-9_]*
+    whitespace [a-z] [a-z0-9_]*
     {
       def to_sexp
-        [:symbol, text_value.to_sym]
+        [:symbol, text_value.strip.to_sym]
+      end
+    }
+  end
+
+  rule symbols
+    symbol*
+    {
+      def to_sexp
+        elements.map { |e| e.to_sexp }
+      end
+    }
+  end
+
+  rule boolean
+    '#' [tTfF]
+    {
+      def to_sexp
+        [:boolean, text_value[1].downcase.to_sym]
       end
     }
   end
@@ -75,7 +97,7 @@ grammar Scheme
   end
 
   rule division
-    left_parenthesis '/' whitespace args:expressions right_parenthesis
+    left_parenthesis '/' args:expressions right_parenthesis
     {
       def to_sexp
         [:/, args.to_sexp]
@@ -84,7 +106,7 @@ grammar Scheme
   end
 
   rule multiplication
-    left_parenthesis '*' whitespace factors:expressions right_parenthesis
+    left_parenthesis '*' factors:expressions right_parenthesis
     {
       def to_sexp
         [:*, factors.to_sexp]
@@ -93,7 +115,7 @@ grammar Scheme
   end
 
   rule negation
-    left_parenthesis '-' whitespace args:expressions right_parenthesis
+    left_parenthesis '-' args:expressions right_parenthesis
     {
       def to_sexp
         [:-, args.to_sexp]
@@ -102,7 +124,7 @@ grammar Scheme
   end
 
   rule addition
-    left_parenthesis '+' whitespace addends:expressions right_parenthesis
+    left_parenthesis '+' addends:expressions right_parenthesis
     {
       def to_sexp
         [:+, addends.to_sexp]
@@ -111,7 +133,7 @@ grammar Scheme
   end
 
   rule defination
-    left_parenthesis 'define' whitespace symbol whitespace expression right_parenthesis
+    left_parenthesis 'define' symbol expression right_parenthesis
     {
       def to_sexp
         [:define, symbol.to_sexp, expression.to_sexp]
@@ -120,11 +142,20 @@ grammar Scheme
   end
 
   rule define_function
-    left_parenthesis 'define' left_parenthesis operator:symbol whitespace arguments:symbol right_parenthesis 
+    left_parenthesis 'define' left_parenthesis operator:symbol whitespace arguments:symbols right_parenthesis
       body:expression right_parenthesis
     {
       def to_sexp
         [:define_function, operator.to_sexp, arguments.to_sexp, body.to_sexp]
+      end
+    }
+  end
+
+  rule function
+    left_parenthesis operator:symbol arguments:symbols right_parenthesis
+    {
+      def to_sexp
+        [:function, operator.to_sexp, arguments.to_sexp]
       end
     }
   end

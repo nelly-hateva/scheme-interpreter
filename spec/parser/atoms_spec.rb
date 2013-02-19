@@ -13,6 +13,7 @@ describe SchemeParser , "numbers" do
     @parser.parse("-0").to_sexp.should eq [:number, 0]
     @parser.parse("-50").to_sexp.should eq [:number, -50]
     @parser.parse("+50").to_sexp.should eq [:number, 50]
+    @parser.parse("9999999999").to_sexp.should eq [:number, 9999999999]
   end
 
   it "can parse float numbers" do
@@ -49,8 +50,18 @@ describe SchemeParser , "symbols" do
     @parser.parse("doctor_11").to_sexp.should eq [:symbol, :doctor_11]
     @parser.parse("u42").to_sexp.should eq [:symbol, :u42]
   end
+end
 
-  it 'can parse nested arithmetic expressions with symbols' do
-    @parser.parse("(+ 1 (* 1 x))").to_sexp.should eq [:+, [[:number, 1], [:*, [[:number, 1], [:symbol, :x]]]]]
+describe SchemeParser , "boolean" do
+
+  before do
+    @parser = SchemeParser.new
+  end
+
+  it 'can parse true and false' do
+    @parser.parse("#t").to_sexp.should eq [:boolean, :t]
+    @parser.parse("#T").to_sexp.should eq [:boolean, :t]
+    @parser.parse("#f").to_sexp.should eq [:boolean, :f]
+    @parser.parse("#F").to_sexp.should eq [:boolean, :f]
   end
 end
