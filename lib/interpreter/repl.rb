@@ -18,13 +18,14 @@ class InteractiveShell
   rescue StopIteration
     raise
   rescue => e
-    puts "ERROR: #{e.class} => #{e.message}"
-    puts e.backtrace.join("\n")
+    puts "#{e.message}"
+    #puts "ERROR: #{e.class} => #{e.message}"
+    #puts e.backtrace.join("\n")
   end
 
   def run
     loop do
-      print '> '
+      print '>> '
       execute gets.chomp
     end
   end
@@ -49,7 +50,7 @@ END
   end
 
   def evaluate_and_show_value(expr)
-    value = expr.evaluate(@env)
+    value = expr.evaluate(@environment)
     puts "#{value}"
   end
 end

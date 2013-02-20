@@ -9,13 +9,13 @@ describe CallFunction do
     Expr.build parse(string)
   end
 
-  def evaluate(string, env = {})
+  def evaluate(string)
     build(string).evaluate(env)
   end
 
   #it 'with two arguments' do
-    #evaluate("(define (increment x) (+ x 1))
-              #(increment 5)").should eq 6
+    #evaluate("(define (increment x) (+ x 1))").should eq "increment"
+    #evaluate("(increment 5)").should eq 6
   #end
 
   #it 'with tree arguments' do

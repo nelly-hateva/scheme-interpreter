@@ -49,4 +49,9 @@ describe SchemeParser , "call functions" do
     @parser.parse("(mul4 42 0 42 0)").to_sexp.should eq \
       [:function, [:symbol, :mul4], [[:number, 42], [:number, 0], [:number, 42], [:number, 0]]]
   end
+
+  #it 'nested functions' do
+    #@parser.parse("(increment (add 40 1)").to_sexp.should eq \
+      #[:function, [:symbol, :increment], [:function, [:symbol, :add], [[:number, 40], [:number, 1]]]]
+  #end
 end

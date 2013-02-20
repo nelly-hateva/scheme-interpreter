@@ -8,6 +8,8 @@ module Expr
       Define.build sexpression[1], sexpression[2]
     elsif [:define_function].include? sexpression[0]
       DefineFunction.build sexpression[1], sexpression[2], sexpression[3]
+    elsif [:function].include? sexpression[0]
+      CallFunction.build sexpression[1], sexpression[2]
     end
   end
 end
@@ -105,11 +107,11 @@ end
 class Define
   attr_reader :name, :value
 
-  def self.build(sexpression_name, sexpression_value)
-    if not ((Expr.build sexpression_name).is_a? Atom or (Expr.build sexpression_name).is_a? Arithmetic )
-      raise "define: expected value to be number, string, symbol or arithmetic expression"
+  def self.build(name, value)
+    if ((Expr.build value).is_a? Atom or (Expr.build value).is_a? Arithmetic )
+      Define.new (Expr.build name).value, (Expr.build value).value
     else
-      Define.new (Expr.build sexpression_name).value, (Expr.build sexpression_value).value
+      raise "define: expected value to be atom or arithmetic expression"
     end
   end
 
@@ -127,6 +129,8 @@ class Define
 end
 
 class DefineFunction
+  attr_reader :operator, :args, :body
+
   def self.build(operator, args, body)
     DefineFunction.new (Expr.build operator), (Expr.build args), (Expr.build body)
   end
@@ -136,18 +140,36 @@ class DefineFunction
   end
 
   def evaluate(environment = {})
+    if environment.has_key? operator
+      raise "#{operator}: this function was defined previously and cannot be re-defined"
+    else
+      environment[operator] = args, body
+      operator.value
+    end
   end
 end
 
 class CallFunction
-  def self.build(operator, args, body)
-    DefineFunction.new (Expr.build operator), (Expr.build args), (Expr.build body)
+  attr_reader :operator, :args
+
+  def self.build(operator, args)
+    CallFunction.new (Expr.build operator), (Expr.build args)
   end
 
-  def initialize(operator, args, body)
-    @operator, @args, @body = operator, args, body
+  def initialize(operator, args)
+    @operator, @args = operator, args
   end
 
   def evaluate(environment = {})
+    if environment[operator]
+      params, body = environment[operator]
+      if params.size != args.size
+        raise "Argument's number doesn't match"
+      else 
+        #(Expr.build body).evaluate(sreda v koqto params e zameneno s args)
+      end
+    else
+      raise "#{operator.value}: this function is not defined"
+    end
   end
 end

@@ -142,7 +142,7 @@ grammar Scheme
   end
 
   rule define_function
-    left_parenthesis 'define' left_parenthesis operator:symbol whitespace arguments:symbols right_parenthesis
+    left_parenthesis 'define' left_parenthesis operator:symbol arguments:symbols right_parenthesis
       body:expression right_parenthesis
     {
       def to_sexp
@@ -152,7 +152,7 @@ grammar Scheme
   end
 
   rule function
-    left_parenthesis operator:symbol arguments:symbols right_parenthesis
+    left_parenthesis operator:symbol whitespace arguments:expressions right_parenthesis
     {
       def to_sexp
         [:function, operator.to_sexp, arguments.to_sexp]
