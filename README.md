@@ -1,3 +1,7 @@
-Scheme interpreter <br/>
-Ruby project <br/>
-Nelly Hateva <br/>
+Scheme Interpreter
+====================
+
+Ruby Course
+---------------------
+
+Nelly Hateva

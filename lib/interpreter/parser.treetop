@@ -1,162 +1,137 @@
-grammar Scheme
-  rule result
-    expression
-  end
+module Interpreter
+  grammar Scheme
+    rule result
+      expression
+    end
 
-  rule expression
-    whitespace e:( atom / arithmetic / defination / define_function / function ) whitespace
-    {
-      def to_sexp
-        e.to_sexp
-      end
-    }
-  end
+    rule expression
+      whitespace e:( atom / primitive / defination / define_function / function ) whitespace
+      {
+        def to_sexp
+          e.to_sexp
+        end
+      }
+    end
 
-  rule expressions
-    expression*
-    {
-      def to_sexp
-        elements.map { |e| e.to_sexp }
-      end
-    }
-  end
+    rule expressions
+      expression*
+      {
+        def to_sexp
+          elements.map { |e| e.to_sexp }
+        end
+      }
+    end
 
-  rule atom
-    string / number / symbol / boolean
-  end
+    rule atom
+      string / number / symbol / boolean
+    end
 
-  rule string
-    '"' ('\\"' / [^"])* '"'
-    {
-      def to_sexp
-        [:string, text_value[1..-2]]
-      end
-    }
-  end
+    rule string
+      '"' ('\\"' / [^"])* '"'
+      {
+        def to_sexp
+          [:string, text_value[1..-2]]
+        end
+      }
+    end
 
-  rule number
-    ('+' / '-')? digit+ '.' digit+ ( [eE] digit+ )?
-    {
-      def to_sexp
-        [:number, Float(text_value)]
-      end
-    } /
-    ('+' / '-')? digit+
-    {
-      def to_sexp
-        [:number, Integer(text_value)]
-      end
-    }
-  end
+    rule number
+      ('+' / '-')? digit+ '.' digit+ ( [eE] ('+' / '-')? digit+ )?
+      {
+        def to_sexp
+          [:number, Float(text_value)]
+        end
+      } /
+      ('+' / '-')? digit+
+      {
+        def to_sexp
+          [:number, Integer(text_value)]
+        end
+      }
+    end
 
-  rule digit
-    [0-9]
-  end
+    rule digit
+      [0-9]
+    end
 
-  rule symbol
-    whitespace [a-z] [a-z0-9_]*
-    {
-      def to_sexp
-        [:symbol, text_value.strip.to_sym]
-      end
-    }
-  end
+    rule symbol
+      whitespace [a-z] [a-z0-9_]*
+      {
+        def to_sexp
+          [:symbol, text_value.strip.to_sym]
+        end
+      }
+    end
 
-  rule symbols
-    symbol*
-    {
-      def to_sexp
-        elements.map { |e| e.to_sexp }
-      end
-    }
-  end
+    rule symbols
+      symbol*
+      {
+        def to_sexp
+          elements.map { |e| e.to_sexp }
+        end
+      }
+    end
 
-  rule boolean
-    '#' [tTfF]
-    {
-      def to_sexp
-        [:boolean, text_value[1].downcase.to_sym]
-      end
-    }
-  end
+    rule boolean
+      '#' [tTfF]
+      {
+        def to_sexp
+          [:boolean, text_value[1].downcase.to_sym]
+        end
+      }
+    end
 
-  rule whitespace
-    " "*
-  end
+    rule whitespace
+      " "*
+    end
 
-  rule left_parenthesis
-    whitespace '(' whitespace
-  end
-  
-  rule right_parenthesis
-    whitespace ')' whitespace
-  end
+    rule left_parenthesis
+      whitespace '(' whitespace
+    end
 
-  rule arithmetic
-    addition / multiplication / negation / division
-  end
+    rule right_parenthesis
+      whitespace ')' whitespace
+    end
 
-  rule division
-    left_parenthesis '/' args:expressions right_parenthesis
-    {
-      def to_sexp
-        [:/, args.to_sexp]
-      end
-    }
-  end
+    rule primitive
+      left_parenthesis operator:primitive_operator args:expressions right_parenthesis
+      {
+        def to_sexp
+          [operator.text_value.to_sym, args.to_sexp]
+        end
+      }
+    end
 
-  rule multiplication
-    left_parenthesis '*' factors:expressions right_parenthesis
-    {
-      def to_sexp
-        [:*, factors.to_sexp]
-      end
-    }
-  end
+    rule primitive_operator
+      '/' / '*' / '+' / '-' / '=' / '<' / '<=' / '>' / '>='
+    end
 
-  rule negation
-    left_parenthesis '-' args:expressions right_parenthesis
-    {
-      def to_sexp
-        [:-, args.to_sexp]
-      end
-    }
-  end
+    rule defination
+      left_parenthesis 'define' symbol expression right_parenthesis
+      {
+        def to_sexp
+          [:define, symbol.to_sexp, expression.to_sexp]
+        end
+      }
+    end
 
-  rule addition
-    left_parenthesis '+' addends:expressions right_parenthesis
-    {
-      def to_sexp
-        [:+, addends.to_sexp]
-      end
-    }
-  end
+    rule define_function
+      left_parenthesis 'define' left_parenthesis operator:symbol arguments:symbols right_parenthesis
+        body:expression right_parenthesis
+      {
+        def to_sexp
+          [:define_function, operator.to_sexp, arguments.to_sexp, body.to_sexp]
+        end
+      }
+    end
 
-  rule defination
-    left_parenthesis 'define' symbol expression right_parenthesis
-    {
-      def to_sexp
-        [:define, symbol.to_sexp, expression.to_sexp]
-      end
-    }
-  end
-
-  rule define_function
-    left_parenthesis 'define' left_parenthesis operator:symbol arguments:symbols right_parenthesis
-      body:expression right_parenthesis
-    {
-      def to_sexp
-        [:define_function, operator.to_sexp, arguments.to_sexp, body.to_sexp]
-      end
-    }
-  end
-
-  rule function
-    left_parenthesis operator:symbol whitespace arguments:expressions right_parenthesis
-    {
-      def to_sexp
-        [:function, operator.to_sexp, arguments.to_sexp]
-      end
-    }
+    rule function
+      left_parenthesis operator:symbol arguments:expressions right_parenthesis
+      {
+        def to_sexp
+          [:function, operator.to_sexp, arguments.to_sexp]
+        end
+      }
+    end
   end
 end

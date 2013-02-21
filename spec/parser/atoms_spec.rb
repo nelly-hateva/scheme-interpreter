@@ -1,67 +1,67 @@
 require 'spec_helper'
 
-describe SchemeParser , "numbers" do
+describe Interpreter::SchemeParser , 'numbers' do
 
   before do
-    @parser = SchemeParser.new
+    @parser = Interpreter::SchemeParser.new
   end
 
-  it "can parse integer numbers" do
-    @parser.parse("5").to_sexp.should eq [:number, 5]
-    @parser.parse("0").to_sexp.should eq [:number, 0]
-    @parser.parse("+0").to_sexp.should eq [:number, 0]
-    @parser.parse("-0").to_sexp.should eq [:number, 0]
-    @parser.parse("-50").to_sexp.should eq [:number, -50]
-    @parser.parse("+50").to_sexp.should eq [:number, 50]
-    @parser.parse("9999999999").to_sexp.should eq [:number, 9999999999]
+  it 'integers' do
+    @parser.parse('0').to_sexp.should eq [:number, 0]
+    @parser.parse('+0').to_sexp.should eq [:number, 0]
+    @parser.parse('-0').to_sexp.should eq [:number, 0]
+    @parser.parse('42').to_sexp.should eq [:number, 42]
+    @parser.parse('-50').to_sexp.should eq [:number, -50]
+    @parser.parse('+1024').to_sexp.should eq [:number, 1024]
+    @parser.parse('9999999999').to_sexp.should eq [:number, 9999999999]
   end
 
-  it "can parse float numbers" do
-    @parser.parse("134.99999").to_sexp.should eq [:number, 134.99999]
-    @parser.parse("999999999.999999999").to_sexp.should eq [:number, 999999999.999999999]
-    @parser.parse("1.0e1").to_sexp.should eq [:number, 10]
-    @parser.parse("2.0E2").to_sexp.should eq [:number, 200]
+  it 'float' do
+    @parser.parse('134.99999').to_sexp.should eq [:number, 134.99999]
+    @parser.parse('999999999.999999999').to_sexp.should eq [:number, 999999999.999999999]
+    @parser.parse('1.0e1').to_sexp.should eq [:number, 10]
+    @parser.parse('2.0E2').to_sexp.should eq [:number, 200]
+    @parser.parse('0.1E-10').to_sexp.should eq [:number, 0.00000000001]
   end
 end
 
-describe SchemeParser , "strings" do
+describe Interpreter::SchemeParser do
 
   before do
-    @parser = SchemeParser.new
+    @parser = Interpreter::SchemeParser.new
   end
 
-  it "can parse strings" do
+  it 'strings' do
     @parser.parse('"SchemeParser"').to_sexp.should eq [:string, "SchemeParser"]
     @parser.parse('"Test string with\n newline"').to_sexp.should eq [:string, "Test string with\\n newline"]
   end
 end
 
-describe SchemeParser , "symbols" do
+describe Interpreter::SchemeParser do
 
   before do
-    @parser = SchemeParser.new
+    @parser = Interpreter::SchemeParser.new
   end
 
-  it 'can parse symbols' do
-    @parser.parse("x").to_sexp.should eq [:symbol, :x]
-    @parser.parse("x9_1").to_sexp.should eq [:symbol, :x9_1]
-    @parser.parse("x0_").to_sexp.should eq [:symbol, :x0_]
-    @parser.parse("xoxo_12").to_sexp.should eq [:symbol, :xoxo_12]
-    @parser.parse("doctor_11").to_sexp.should eq [:symbol, :doctor_11]
-    @parser.parse("u42").to_sexp.should eq [:symbol, :u42]
+  it 'symbols' do
+    @parser.parse('x').to_sexp.should eq [:symbol, :x]
+    @parser.parse('x12_').to_sexp.should eq [:symbol, :x12_]
+    @parser.parse('f').to_sexp.should eq [:symbol, :f]
+    @parser.parse('increment').to_sexp.should eq [:symbol, :increment]
+    @parser.parse('the_doctor').to_sexp.should eq [:symbol, :the_doctor]
   end
 end
 
-describe SchemeParser , "boolean" do
+describe Interpreter::SchemeParser do
 
   before do
-    @parser = SchemeParser.new
+    @parser = Interpreter::SchemeParser.new
   end
 
-  it 'can parse true and false' do
-    @parser.parse("#t").to_sexp.should eq [:boolean, :t]
-    @parser.parse("#T").to_sexp.should eq [:boolean, :t]
-    @parser.parse("#f").to_sexp.should eq [:boolean, :f]
-    @parser.parse("#F").to_sexp.should eq [:boolean, :f]
+  it 'boolean' do
+    @parser.parse('#t').to_sexp.should eq [:boolean, :t]
+    @parser.parse('#T').to_sexp.should eq [:boolean, :t]
+    @parser.parse('#f').to_sexp.should eq [:boolean, :f]
+    @parser.parse('#F').to_sexp.should eq [:boolean, :f]
   end
 end
