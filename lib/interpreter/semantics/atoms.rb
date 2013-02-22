@@ -40,10 +40,7 @@ module Interpreter
 
   class Boolean < Atom
     def evaluate(environment = {})
-      if value == :t
-        true
-      else
-        false
+      value == :t
       end
     end
   end
