@@ -7,6 +7,8 @@ module Interpreter
         Relational.build sexpression[0], sexpression[1]
       elsif [:+, :-, :*, :/].include? sexpression[0]
         Arithmetic.build sexpression[0], sexpression[1]
+      elsif [:and, :or, :not].include? sexpression[0]
+        Logic.build sexpression[0], sexpression[1]
       elsif [:if].include? sexpression[0]
         IfElse.build sexpression[1], sexpression[2], sexpression[3]
       elsif [:define].include? sexpression[0]

@@ -40,7 +40,7 @@ module Interpreter
           raise "Argument's number doesn't match"
         else
           keys = parameters.map(&:value)
-          values = arguments.map(&:value)
+          values = arguments.map { |argument| argument.evaluate(environment) }
           (Expression.build body).evaluate(environment.merge Hash[*keys.zip(values).flatten])
         end
       else

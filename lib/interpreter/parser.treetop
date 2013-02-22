@@ -1,11 +1,11 @@
 module Interpreter
   grammar Scheme
-    rule result
+    rule program
       expression
     end
 
     rule expression
-      whitespace e:( atom / primitive / defination / define_function / if_else / function) whitespace
+      whitespace e:( atom / primitive / defination / define_function / if_else / function ) whitespace
       {
         def to_sexp
           e.to_sexp
@@ -82,7 +82,7 @@ module Interpreter
     end
 
     rule whitespace
-      " "*
+      [ \n]*
     end
 
     rule left_parenthesis
@@ -103,7 +103,7 @@ module Interpreter
     end
 
     rule primitive_operator
-      '/' / '*' / '+' / '-' / '==' / '<' / '<=' / '>' / '>='
+      '/' / '*' / '+' / '-' / '==' / '<' / "<=" / '>' / '>=' / 'and' / 'or' / 'not'
     end
 
     rule defination

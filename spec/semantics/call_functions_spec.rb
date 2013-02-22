@@ -17,6 +17,10 @@ describe 'Call Functions' do
     evaluate('(define (increment x) (+ x 1))').should eq :increment
     evaluate('(increment 5)', :increment => \
     [[(Interpreter::Expression.build [:symbol, :x])], [:+, [[:symbol, :x], [:number, 1]]]]).should eq 6
+    evaluate('(increment (increment 5))', :increment => \
+    [[(Interpreter::Expression.build [:symbol, :x])], [:+, [[:symbol, :x], [:number, 1]]]]).should eq 7
+    evaluate('(increment (* (+ 2 3) 4))', :increment => \
+    [[(Interpreter::Expression.build [:symbol, :x])], [:+, [[:symbol, :x], [:number, 1]]]]).should eq 21
     expect { evaluate('(increment 5 7)', :increment => \
     [[(Interpreter::Expression.build [:symbol, :x])], [:+, [[:symbol, :x], [:number, 1]]]]) }.to \
                                                                                   raise_error(RuntimeError)
@@ -28,6 +32,9 @@ describe 'Call Functions' do
     evaluate('(mul 6 7)', :mul => \
     [[(Interpreter::Expression.build [:symbol, :x]), (Interpreter::Expression.build [:symbol, :y])], \
     [:*, [[:symbol, :x], [:symbol, :y]]]]).should eq 42
+    evaluate('(mul z 7)', :mul => \
+    [[(Interpreter::Expression.build [:symbol, :x]), (Interpreter::Expression.build [:symbol, :y])], \
+    [:*, [[:symbol, :x], [:symbol, :y]]]], z: 1).should eq 7
     expect { evaluate('(mul 6 7 8)', :mul => \
     [[(Interpreter::Expression.build [:symbol, :x]), (Interpreter::Expression.build [:symbol, :y])], \
     [:*, [[:symbol, :x], [:symbol, :y]]]])}.to raise_error(RuntimeError)
@@ -37,6 +44,10 @@ describe 'Call Functions' do
   it 'with more arguments' do
     evaluate('(define (f x y z) (* x (+ y z)))').should eq :f
     evaluate('(f 1 2 3)', :f => \
+    [[(Interpreter::Expression.build [:symbol, :x]), (Interpreter::Expression.build [:symbol, :y]), \
+                                                         (Interpreter::Expression.build [:symbol, :z])], \
+    [:*, [[:symbol, :x], [:+, [[:symbol, :y], [:symbol, :z]]]]]]).should eq 5
+    evaluate('(f (+ 1 0) (*0.5 4) ( / 6 2))', :f => \
     [[(Interpreter::Expression.build [:symbol, :x]), (Interpreter::Expression.build [:symbol, :y]), \
                                                          (Interpreter::Expression.build [:symbol, :z])], \
     [:*, [[:symbol, :x], [:+, [[:symbol, :y], [:symbol, :z]]]]]]).should eq 5
