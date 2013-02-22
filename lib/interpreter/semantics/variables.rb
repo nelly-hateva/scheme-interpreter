@@ -4,7 +4,7 @@ module Interpreter
 
     def self.build(name, value)
       if ((Expression.build value).is_a? Atom or (Expression.build value).is_a? Arithmetic )
-        Define.new (Expression.build name).value, (Expression.build value).evaluate
+        Define.new (Expression.build name).value, (Expression.build value)
       else
         raise "define: expected value to be atom or arithmetic expression"
       end
@@ -18,7 +18,7 @@ module Interpreter
       if environment.has_key? name
         raise "#{name}: this name was defined previously and cannot be re-defined"
       else
-        environment[name] = value
+        environment[name] = value.evaluate(environment)
       end
     end
   end

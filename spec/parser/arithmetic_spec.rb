@@ -39,6 +39,8 @@ describe Interpreter::SchemeParser , 'arithmetic operators with three or more ar
 
   it 'multiplication' do
     @parser.parse('(* 2 3 4)').to_sexp.should eq [:*, [[:number, 2], [:number, 3], [:number, 4]]]
+    @parser.parse('(* 2 pi radius)').to_sexp.should eq [:*, [[:number, 2], [:symbol, :pi], \
+                                                                                       [:symbol, :radius]]]
     @parser.parse('(* 2 x 4 -2)').to_sexp.should eq [:*, [[:number, 2], [:symbol, :x], [:number, 4], \
                                                                                             [:number, -2]]]
   end

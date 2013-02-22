@@ -30,7 +30,7 @@ module Interpreter
 
   class Symbol < Atom
     def evaluate(environment = {})
-      if environment.has_key?(value)
+      if environment.has_key? value
         environment[value]
       else
         raise "#{value}: this symbol is not defined"

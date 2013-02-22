@@ -107,10 +107,10 @@ module Interpreter
     end
 
     rule defination
-      left_parenthesis 'define' symbol expression right_parenthesis
+      left_parenthesis 'define' symbol whitespace e:( atom / primitive ) right_parenthesis
       {
         def to_sexp
-          [:define, symbol.to_sexp, expression.to_sexp]
+          [:define, symbol.to_sexp, e.to_sexp]
         end
       }
     end

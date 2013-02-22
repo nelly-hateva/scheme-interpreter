@@ -14,7 +14,7 @@ describe Interpreter::SchemeParser do
   end
 
   it 'define variables as more complex expressions' do
-    #@parser.parse("(define length (* 2 pi radius)").to_sexp.should eq [:define, [:symbol, :length], \
-     #                                                            [:*, [[:symbol, :pi], [:symbol, :radius]]]]
+    @parser.parse("(define length (* 2 pi radius))").to_sexp.should eq [:define, [:symbol, :length], \
+                                                    [:*, [[:number, 2], [:symbol, :pi], [:symbol, :radius]]]]
   end
 end

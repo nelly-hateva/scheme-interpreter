@@ -57,8 +57,8 @@ describe Interpreter::SchemeParser , 'call functions' do
       [[:number, 42], [:number, 0], [:number, 32], [:number, 1], [:number, 3]]]
   end
 
-  #it 'nested functions' do
-    #@parser.parse('(increment (add 40 1)').to_sexp.should eq \
-      #[:function, [:symbol, :increment], [:function, [:symbol, :add], [[:number, 40], [:number, 1]]]]
-  #end
+  it 'nested functions' do
+    @parser.parse('(increment (add 40 1))').to_sexp.should eq \
+      [:function, [:symbol, :increment], [[:function, [:symbol, :add], [[:number, 40], [:number, 1]]]]]
+  end
 end
