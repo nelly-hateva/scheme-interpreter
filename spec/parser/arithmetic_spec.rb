@@ -73,7 +73,8 @@ describe Interpreter::SchemeParser do
                                                        [:symbol, :x], [:+, [[:number, 1], [:symbol, :y]]]]]
     @parser.parse('(* 1 (/ 1 3 5 6))').to_sexp.should eq [:*, [[:number, 1], [:/, [[:number, 1], \
                                                                [:number, 3], [:number, 5], [:number, 6]]]]]
-    @parser.parse('(/ 1 2 (- 1 x))').to_sexp.should eq [:/, [[:number, 1], [:number, 2], \
-                                                                       [:-, [[:number, 1], [:symbol, :x]]]]]
+    @parser.parse('(/ (+ 1 3 x (+ 1 y)) 2 (- 1 x))').to_sexp.should eq [:/, \
+    [[:+, [[:number, 1], [:number, 3], [:symbol, :x], [:+, [[:number, 1], [:symbol, :y]]]]], [:number, 2], \
+                                                                      [:-, [[:number, 1], [:symbol, :x]]]]]
   end
 end

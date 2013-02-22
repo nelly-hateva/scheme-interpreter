@@ -10,6 +10,7 @@ task :skeptic do
           (Dir.glob File.join("**", "**", "**", "*.treetop")) +
           ["RakeFile"]
   files.each do |file|
+    p "#{file}"
     system("skeptic --no-trailing-whitespace #{file}") or exit(1)
   end
 end

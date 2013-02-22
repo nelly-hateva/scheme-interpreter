@@ -5,7 +5,7 @@ module Interpreter
     end
 
     rule expression
-      whitespace e:( atom / primitive / defination / define_function / function ) whitespace
+      whitespace e:( atom / primitive / defination / define_function / if_else / function) whitespace
       {
         def to_sexp
           e.to_sexp
@@ -103,7 +103,7 @@ module Interpreter
     end
 
     rule primitive_operator
-      '/' / '*' / '+' / '-' / '=' / '<' / '<=' / '>' / '>='
+      '/' / '*' / '+' / '-' / '==' / '<' / '<=' / '>' / '>='
     end
 
     rule defination
@@ -130,6 +130,15 @@ module Interpreter
       {
         def to_sexp
           [:function, operator.to_sexp, arguments.to_sexp]
+        end
+      }
+    end
+
+    rule if_else
+      left_parenthesis 'if' test:primitive then_expr:expression else_expr:expression right_parenthesis
+      {
+        def to_sexp
+          [:if, test.to_sexp, then_expr.to_sexp, else_expr.to_sexp]
         end
       }
     end

@@ -6,10 +6,10 @@ describe Interpreter::SchemeParser , 'relational operators with two arguments' d
     @parser = Interpreter::SchemeParser.new
   end
 
-  it '=' do
-    @parser.parse('(= 2 3)').to_sexp.should eq [:'=', [[:number, 2], [:number, 3]]]
-    @parser.parse('(= x 0.03)').to_sexp.should eq [:'=', [[:symbol, :x], [:number, 0.03]]]
-    @parser.parse('(= 999999.999 0)').to_sexp.should eq [:'=', [[:number, 999999.999], [:number, 0]]]
+  it '==' do
+    @parser.parse('(== 2 3)').to_sexp.should eq [:==, [[:number, 2], [:number, 3]]]
+    @parser.parse('(== x 0.03)').to_sexp.should eq [:==, [[:symbol, :x], [:number, 0.03]]]
+    @parser.parse('(== 999999.999 0)').to_sexp.should eq [:==, [[:number, 999999.999], [:number, 0]]]
   end
 
   it '< and <=' do
@@ -31,9 +31,9 @@ describe Interpreter::SchemeParser , 'arithmetic operators with three or more ar
     @parser = Interpreter::SchemeParser.new
   end
 
-  it '=' do
-    @parser.parse('(= 2 3 4)').to_sexp.should eq [:'=', [[:number, 2], [:number, 3], [:number, 4]]]
-    @parser.parse('(= 2 x 4 -2)').to_sexp.should eq [:'=', [[:number, 2], [:symbol, :x], [:number, 4], \
+  it '==' do
+    @parser.parse('(== 2 3 4)').to_sexp.should eq [:==, [[:number, 2], [:number, 3], [:number, 4]]]
+    @parser.parse('(== 2 x 4 -2)').to_sexp.should eq [:==, [[:number, 2], [:symbol, :x], [:number, 4], \
                                                                                             [:number, -2]]]
   end
 
