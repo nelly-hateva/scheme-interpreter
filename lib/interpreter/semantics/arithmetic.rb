@@ -14,9 +14,27 @@ module Interpreter
       if operation == :/
         operands.map { |operand| (Expression.build operand).evaluate(environment) }.inject \
                                                                                        { |a, b| a.to_f / b }
+      elsif operation == :- and operands.length == 1
+        - (Expression.build operands[0]).evaluate(environment)
       else
         operands.map { |operand| (Expression.build operand).evaluate(environment) }.inject(&operation)
       end
+    end
+  end
+
+  class Negation
+    attr_reader :operand
+
+    def self.build(operand)
+      Negation.new operand
+    end
+
+    def initialize(operand)
+      @operand = operand
+    end
+
+    def evaluate(environment = {})
+      - operand.evaluate(environment)
     end
   end
 end

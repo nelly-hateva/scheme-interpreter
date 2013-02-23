@@ -3,7 +3,7 @@ module Interpreter
     def self.build(sexpression)
       if [:number, :string, :symbol, :boolean].include? sexpression[0]
         Atom.build sexpression[0], sexpression[1]
-      elsif [:==, :<, :<=, :>, :>=].include? sexpression[0]
+      elsif [:==, :<, :<=, :>, :>=, :!=].include? sexpression[0]
         Relational.build sexpression[0], sexpression[1]
       elsif [:+, :-, :*, :/].include? sexpression[0]
         Arithmetic.build sexpression[0], sexpression[1]

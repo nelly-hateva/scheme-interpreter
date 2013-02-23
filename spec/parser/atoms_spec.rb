@@ -23,6 +23,20 @@ describe Interpreter::SchemeParser , 'numbers' do
     @parser.parse('2.0E2').to_sexp.should eq [:number, 200]
     @parser.parse('0.1E-10').to_sexp.should eq [:number, 0.00000000001]
   end
+
+  it 'rational' do
+    #@parser.parse('2/3').to_sexp.should eq [:number, Rational(2,3)]
+    #@parser.parse('-2/3').to_sexp.should eq [:number, Rational(-2,3)]
+    #@parser.parse('99999/1').to_sexp.should eq [:number, Rational(99999,1)]
+    #@parser.parse('1/99999').to_sexp.should eq [:number, Rational(1,99999)]
+  end
+
+    it 'complex' do
+    #@parser.parse('2+3i').to_sexp.should eq [:number, Complex(2,3)]
+    #@parser.parse('-2+3i').to_sexp.should eq [:number, Complex(-2,3)]
+    #@parser.parse('1.0e1+8i').to_sexp.should eq [:number, Complex(10,8)]
+    #@parser.parse('8+0i').to_sexp.should eq [:number, Complex(8,0)]
+  end
 end
 
 describe Interpreter::SchemeParser do
@@ -48,7 +62,8 @@ describe Interpreter::SchemeParser do
     @parser.parse('x12_').to_sexp.should eq [:symbol, :x12_]
     @parser.parse('f').to_sexp.should eq [:symbol, :f]
     @parser.parse('increment').to_sexp.should eq [:symbol, :increment]
-    @parser.parse('the_doctor').to_sexp.should eq [:symbol, :the_doctor]
+    @parser.parse('dalek').to_sexp.should eq [:symbol, :dalek]
+    @parser.parse('-x').to_sexp.should eq [:symbol, :"-x"]
   end
 end
 

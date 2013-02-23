@@ -36,16 +36,41 @@ module Interpreter
     end
 
     rule number
+      real / integer / rational / complex
+    end
+    
+    rule real
       ('+' / '-')? digit+ '.' digit+ ( [eE] ('+' / '-')? digit+ )?
       {
         def to_sexp
           [:number, Float(text_value)]
         end
-      } /
+      }
+    end
+
+    rule integer
       ('+' / '-')? digit+
       {
         def to_sexp
           [:number, Integer(text_value)]
+        end
+      }
+    end
+
+    rule rational
+      numerator:(('+' / '-')? digit+) '/' denominator:(digit+)
+      {
+        def to_sexp
+          [:number, Rational(numerator, denominator)]
+        end
+      }
+    end
+
+    rule complex
+      real:(real / integer) "+" imaginary:(real / integer) "i"
+      {
+        def to_sexp
+          [:number, Complex(real, imaginary)]
         end
       }
     end
@@ -55,7 +80,7 @@ module Interpreter
     end
 
     rule symbol
-      whitespace [a-z] [a-z0-9_]*
+      whitespace ('-')? [a-z] [a-z0-9_-]*
       {
         def to_sexp
           [:symbol, text_value.strip.to_sym]
@@ -103,7 +128,7 @@ module Interpreter
     end
 
     rule primitive_operator
-      '/' / '*' / '+' / '-' / '==' / '<' / "<=" / '>' / '>=' / 'and' / 'or' / 'not'
+      '/' / '*' / '+' / '-' / '==' / '<' / '<=' / '>' / '>=' / '!=' / 'and' / 'or' / 'not'
     end
 
     rule defination

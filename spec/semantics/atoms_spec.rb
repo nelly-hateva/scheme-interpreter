@@ -36,6 +36,8 @@ describe 'Atoms' do
   it 'evaluation of variables' do
     evaluate('x', x: 1).should eq 1
     evaluate('doctor', doctor: "who").should eq "who"
+    evaluate('-x', x: 1).should eq -1
+    evaluate('(-x)', x: -1).should eq 1
   end
 
   it "can not evaluate not defined variables" do
