@@ -5,7 +5,7 @@ module Interpreter
     end
 
     rule expression
-      whitespace e:( atom / primitive / defination / define_function / if_else / function ) whitespace
+      whitespace e:( atom / primitive / defination / define_function / if_else / cond / function ) whitespace
       {
         def to_sexp
           e.to_sexp
@@ -38,7 +38,7 @@ module Interpreter
     rule number
       real / integer / rational / complex
     end
-    
+
     rule real
       ('+' / '-')? digit+ '.' digit+ ( [eE] ('+' / '-')? digit+ )?
       {
@@ -128,7 +128,7 @@ module Interpreter
     end
 
     rule primitive_operator
-      '/' / '*' / '+' / '-' / '==' / '<' / '<=' / '>' / '>=' / '!=' / 'and' / 'or' / 'not'
+      '/' / '%' / '*' / '+' / '-' / '==' / '<' / '<=' / '>' / '>=' / '!=' / 'and' / 'or' / 'not'
     end
 
     rule defination
@@ -160,10 +160,37 @@ module Interpreter
     end
 
     rule if_else
-      left_parenthesis 'if' test:primitive then_expr:expression else_expr:expression right_parenthesis
+      left_parenthesis 'if' test:expression then_expr:expression else_expr:expression right_parenthesis
       {
         def to_sexp
           [:if, test.to_sexp, then_expr.to_sexp, else_expr.to_sexp]
+        end
+      }
+    end
+
+    rule cond
+      left_parenthesis 'cond' tests right_parenthesis
+      {
+        def to_sexp
+          [:cond, tests.to_sexp]
+        end
+      }
+    end
+
+    rule tests
+      test*
+      {
+        def to_sexp
+          elements.map { |e| e.to_sexp }
+        end
+      }
+    end
+
+    rule test
+      left_parenthesis test:expression then_expr:expression right_parenthesis
+      {
+        def to_sexp
+          [test.to_sexp, then_expr.to_sexp]
         end
       }
     end

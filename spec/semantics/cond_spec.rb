@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'If_Else' do
+describe 'Cond' do
   def parse(input)
     Interpreter::SchemeParser.new.parse(input).to_sexp
   end
@@ -14,9 +14,7 @@ describe 'If_Else' do
   end
 
   it do
-    evaluate('(if (> x 0) x (- x))', x: 8).should eq 8
-    evaluate('(if (> x 0) x (- x))', x: -8).should eq 8
-    evaluate('(if (> x 0) #T #F)', x: 8).should eq true
-    evaluate('(if (> x 0) #T #F)', x: -8).should eq false
+    evaluate('(cond  ((< x 0) (-x)) ((> x 0) x) ((== x 0) 0))', x: 8).should eq 8
+    evaluate('(cond  ((< x 0) (-x)) ((> x 0) x) ((== x 0) 0))', x: -8).should eq 8
   end
 end

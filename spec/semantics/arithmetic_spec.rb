@@ -32,6 +32,9 @@ describe 'Arithmetic expressions with two arguments' do
     evaluate('(/ 100 -2)').should eq -50
     #evaluate('(/ 1 99999999)').should eq 0.00000001
     evaluate('(/ x y)', x: 1, y: 2).should eq 0.5
+    evaluate('(% 100 -2)').should eq 0
+    evaluate('(% 1 99999999)').should eq 1
+    evaluate('(% x y)', x: 8, y: 8).should eq 0
   end
 end
 
@@ -66,5 +69,7 @@ describe 'Arithmetic expressions with three or more arguments' do
   it 'supports division' do
     evaluate('(/ 100 -2 2)').should eq -25
     evaluate('(/ x y z)', x: 1, y: 2, z: 2).should eq 0.25
+    evaluate('(% 8 3 2)').should eq 0
+    evaluate('(% x y z)', x: 15, y: 7, z: 2).should eq 1
   end
 end

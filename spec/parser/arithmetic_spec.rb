@@ -16,6 +16,9 @@ describe Interpreter::SchemeParser , 'arithmetic operators with two arguments' d
     @parser.parse('( / 6 3 )').to_sexp.should eq [:/, [[:number, 6], [:number, 3]]]
     @parser.parse('( / 42 y )').to_sexp.should eq [:/, [[:number, 42], [:symbol, :y]]]
     @parser.parse('( / 1 9999 )').to_sexp.should eq [:/, [[:number, 1], [:number, 9999]]]
+    @parser.parse('( % 6 3 )').to_sexp.should eq [:%, [[:number, 6], [:number, 3]]]
+    @parser.parse('( % 42 y )').to_sexp.should eq [:%, [[:number, 42], [:symbol, :y]]]
+    @parser.parse('( % 1 9999 )').to_sexp.should eq [:%, [[:number, 1], [:number, 9999]]]
   end
 
   it 'addition' do
@@ -42,6 +45,11 @@ describe Interpreter::SchemeParser , 'arithmetic operators with three or more ar
     @parser.parse('(* 2 pi radius)').to_sexp.should eq [:*, [[:number, 2], [:symbol, :pi], \
                                                                                        [:symbol, :radius]]]
     @parser.parse('(* 2 x 4 -2)').to_sexp.should eq [:*, [[:number, 2], [:symbol, :x], [:number, 4], \
+                                                                                            [:number, -2]]]
+    @parser.parse('(% 2 3 4)').to_sexp.should eq [:%, [[:number, 2], [:number, 3], [:number, 4]]]
+    @parser.parse('(% 2 pi radius)').to_sexp.should eq [:%, [[:number, 2], [:symbol, :pi], \
+                                                                                       [:symbol, :radius]]]
+    @parser.parse('(% 2 x 4 -2)').to_sexp.should eq [:%, [[:number, 2], [:symbol, :x], [:number, 4], \
                                                                                             [:number, -2]]]
   end
 
